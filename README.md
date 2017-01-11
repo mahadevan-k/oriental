@@ -6,6 +6,8 @@ Oriental is a Java framework for using OrientDB. I built Oriental because we nee
 
 Lets create a simple application that allows creation of users and connecting users as friends.
 
+### Define the data model with entities
+
 We'll start off by creating a `User` vertex entity. Vertex Entities are JSON serializable vertices and extend the class `VertexEntity`. The Vertex entity class itself, implements the blueprints `Vertex` interface, so most vertex functions are directly accessible from any vertex entity. In our case, we'll be using the `getProperty` and `setProperty` functions to get and set the name and email of the user.
 
 **User.java**
@@ -51,12 +53,20 @@ Next, lets create a `Friend` edge entity. Edge entites are also JSON serializabl
 	}
     
 A lot of functions that deal with vertex entities and edge entites in Oriental take the class of the entity as a parameter, to return the appropriate entity type. Hence the usage `getInVertex(User.class)`
+
+Since the `User` vertex entity is serializable, when the `Friend` edge entity is serialized, it will contain a `fromUser` and `toUser` field that in-turn contain serialized `User` entities.
    
 Now that we're done implementing the basic entities we need for our system, its time to define some business logic around them.
 
 We do this in Oriental using entity managers. Entity managers make it easy to create, find and delete entities, and managing transactions.
 
 Lets create a user manager to deal with CRUD operations for a user.
+
+### Write business logic with managers
+
+Entity Managers are used to write business-logic in Oriental. All entity managers extend the `EntityManager` class, and should implement the function `createEntityTypes` to create vertex and edge entity types required by the manager. Basically this involves calls to `VertexEntity.createVertexType` and `EdgeEntity.createEdgeType`, which in turn, register the vertex and edge types with the OrientDB database.
+
+Entity Managers are not tied to specific vertex entities or edge entities, since they are meant to provide a higher abstraction layer of business functions. An entity manager can deal with one or more entities, or choose not to deal with an entity at all, though the latter is only useful for logical consistency in your system.
 
 **UserManager.java**
 
@@ -139,16 +149,29 @@ And lets create a corresponding friend manager that can deal with managing frien
 	        this.commit();
 	    }
 	}
+	
 
-The main functions worth noting here are `getVertexEntity`, `findVertexEntity`, `getEdgeEntity` and `findEdgeEntity`. Of these, `findEdgeEntity` is interesting because OrientDB doesn't provide a way to find edges based on the vertices. Oriental does this by adding a `tag` property to the edge that contains the ids of the vertices that the edge connects to. This has one implication which is that when an edge is connected to vertices, those vertices must already be committed to the database, since the correct ids are assigned by OrientDB only after saving the vertex to the database.
 
-Entity Managers are not tied to specific vertex entities or edge entities, since they are meant to provide a higher abstraction layer of business functions. An entity manager can deal with one or more entities, or choose not to deal with an entity at all, though the latter is only useful for logical consistency in your system.
+The main functions used in creating the business logic are `getVertexEntity`, `findVertexEntity`, `getEdgeEntity` and `findEdgeEntity`. Of these, `findEdgeEntity` is interesting because OrientDB doesn't provide a way to find edges based on the vertices. Oriental does this by adding a `tag` property to the edge that contains the ids of the vertices that the edge connects to. This has one implication which is that when an edge is connected to vertices, those vertices must already be committed to the database, since the correct ids are assigned by OrientDB only after saving the vertex to the database.
 
-`EdgeListIterable` class represents a JSON serializable collection of edges.
+Long story short, create two vertices, commit, then create the edge between them, then commit again to ensure everything is stored safe and sound in the database. If the vertices you need to connect are already in the database then just go ahead and create the edge and commit it.
 
-Oriental also provides a `PaginatedEdgeListIterable` for paginated lists, but more on that later.
+### Tie them both together with a controller
 
 Lets now get everything together, so we have something that works.
+
+Oriental provides a `ThreadSafeGraph` class which is a wrapper around `OrientGraph` that deals with a small quirk required during initialization to make sure the graph works across threads.
+
+We write operations in Oriental in the following sequence:
+
+- First, create the `OrientGraphFactory`
+- then create the managers, which in turn creates a non-transactional graph and registers database types
+- then create the `ThreadSafeGraph` instance
+- assign the `ThreadSafeGraph` instance to the managers
+- call manager functions
+- shutdown the thread safe graph
+
+This ensures that non-transactional operations required to register vertex and edge types run before any transactional operation, and ensures that all data is committed to the database at the end of the operation.
     
 **App.java**
 
@@ -179,23 +202,6 @@ Lets now get everything together, so we have something that works.
 	}
 
 Now you should be able to compile and run the program and see Oriental in action.
-
-A couple of things to note here.
-
-Firstly, you'll need to register the entity types with OrientDB before you create your transactional graph instance. This is done via `createVertexType` and `createEdgeType`
-
-Oriental provides a `ThreadSafeGraph` class which is a wrapper around `OrientGraph` that deals with a small quirk required during initialization to make sure the graph works across threads.
-
-Make sure you write operations in the following sequence:
-
-- First, create the `OrientGraphFactory`
-- then create the managers, which in turn creates a non-transactional graph and registers database types
-- then create the `ThreadSafeGraph` instance
-- assign the `ThreadSafeGraph` instance to the managers
-- call manager functions
-- shutdown the thread safe graph
-
-This ensures that non-transactional operations required to register vertex and edge types run before any transactional operation, and ensures that all data is committed to the database at the end of the operation.
 
 ## Gremlin Queries and Pagination
 
