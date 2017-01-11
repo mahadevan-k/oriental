@@ -156,7 +156,7 @@ The main functions used in creating the business logic are `getVertexEntity`, `f
 
 Long story short, create two vertices, commit, then create the edge between them, then commit again to ensure everything is stored safe and sound in the database. If the vertices you need to connect are already in the database then just go ahead and create the edge and commit it.
 
-### Tie them both together with a controller
+### Tie them together with a controller
 
 Lets now get everything together, so we have something that works.
 
