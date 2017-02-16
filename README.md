@@ -21,13 +21,17 @@ To include Oriental in your project, add the following to your `pom.xml` under t
         <version>0.0.1</version>
     </dependency>
 
-## Building a social network
+## Tutorial
 
-Lets create a simple application that allows creation of users and connecting users as friends.
+Lets walk through the code necessary to setup a network of friends.
+
+The entire code for the tutorial is at [examples/socialnetwork](https://github.com/bitonator/oriental/tree/master/src/main/java/io/github/bitonator/oriental/examples/socialnetwork). 
+
+You can either create the project, run it and refer to this doc, or learn from this doc and compare your code to the example project.
 
 ### Define the data model with entities
 
-We'll start off by creating a `User` vertex entity. Vertex Entities are JSON serializable vertices and extend the class `VertexEntity`. The Vertex entity class itself, implements the blueprints `Vertex` interface, so most vertex functions are directly accessible from any vertex entity. In our case, we'll be using the `getProperty` and `setProperty` functions to get and set the name and email of the user.
+We'll start off by creating a `User` vertex entity. Vertex Entities are JSON serializable vertices and extend the class `VertexEntity`. The Vertex entity class itself, implements the [Blueprints Vertex](http://www.tinkerpop.com/docs/javadocs/blueprints/2.0.0/com/tinkerpop/blueprints/Vertex.html) interface, so most blueprints vertex functions are directly accessible from any vertex entity. In our case, we'll be using the `getProperty` and `setProperty` functions to get and set the name and email of the user.
 
 **User.java**
 
@@ -49,7 +53,7 @@ We'll start off by creating a `User` vertex entity. Vertex Entities are JSON ser
 	    }
 	}
     
-Next, lets create a `Friend` edge entity. Edge entites are also JSON serializable and derive from `EdgeEntity` and implement the blueprints `Edge` interface. We'll use the `getInVertex` and `getOutVertex` functions of the `EdgeEntity` to get the vertices attached to the friend edge. Edges can also have properties, and the `setProperty` and `getProperty` methods can be used to access and modify them.
+Next, lets create a `Friend` edge entity. Edge entites are also JSON serializable and derive from `EdgeEntity` and implement the [Blueprints Edge](http://www.tinkerpop.com/docs/javadocs/blueprints/2.0.0/com/tinkerpop/blueprints/Edge.html) interface. We'll use the `getInVertex` and `getOutVertex` functions of the `EdgeEntity` to get the vertices attached to the friend edge. Edges can also have properties, and the `setProperty` and `getProperty` methods can be used to access and modify them.
     
 **friend.java**
 
@@ -235,6 +239,8 @@ To run a generic query that returns simpler objects like counts etc. use the `qu
 		long result=this.query("g.v(user).outE('Friend').count()", map);
 		return result;
     }
+    
+Note the use of `map` to add parameters to the query. `g.v(user)` will use the `user` parameter added in `map`.
     
 For graph traversal queries from the current vertex, use either `gremlinVertexEntity` or `gremlinVertexEntityList` or `grenlinPaginateVertexEntityList`, or use the Edge equivalents(e.g. `gremlinEdgeEntity`) for Edge entity lists.
 
