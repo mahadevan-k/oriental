@@ -2,6 +2,25 @@
 
 Oriental is a Java framework for using OrientDB. I built Oriental because we needed a convenient way to use OrientDB to create a backend REST API for a social network app, and so Oriental tends to provide functionality that better suits building REST APIs with it. I used Oriental with Java Spring, so if you're a Spring developer, Oriental's design will fit more naturally with your code.
 
+## Guide Assumptions
+
+Before you read this document, please familiarize yourself with the following
+
+- [OrientDB Graph API](http://orientdb.com/docs/2.1/Graph-Database-Tinkerpop.html)
+- [Gremlin Graph Traversal Library](https://github.com/tinkerpop/gremlin/wiki)
+
+## Including Oriental in your project
+
+### Maven
+
+To include Oriental in your project, add the following to your `pom.xml` under the `<dependencies>` tag
+
+    <dependency>
+        <groupId>io.github.bitonator</groupId>
+        <artifactId>oriental</artifactId>
+        <version>0.0.1</version>
+    </dependency>
+
 ## Building a social network
 
 Lets create a simple application that allows creation of users and connecting users as friends.

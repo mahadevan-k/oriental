@@ -1,30 +1,162 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.bitonator</groupId>
-  <artifactId>oriental</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
-  <name>oriental</name>
-  <url>http://maven.apache.org</url>
+	<groupId>io.github.bitonator</groupId>
+	<artifactId>oriental</artifactId>
+	<version>0.0.1</version>
+	<packaging>jar</packaging>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-    	<groupId>com.orientechnologies</groupId>
-    	<artifactId>orientdb-graphdb</artifactId>
-    	<version>2.1.2</version>
-    </dependency>
-  </dependencies>
+	<name>oriental</name>
+	<url>https://github.com/bitonator/oriental</url>
+	<description>Oriental is a Java framework for using OrientDB. I built Oriental because we needed a convenient way to use OrientDB to create a backend REST API for a social network app, and so Oriental tends to provide functionality that better suits building REST APIs with it. I used Oriental with Java Spring, so if you're a Spring developer, Oriental's design will fit more naturally with your code.
+</description>
+	<scm>
+		<connection>scm:git:git://github.com:bitonator/oriental.git</connection>
+		<developerConnection>scm:git:ssh://github.com:bitonator/oriental.git</developerConnection>
+		<url>https://github.com/bitonator/oriental/tree/master</url>
+	</scm>
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<issueManagement>
+		<url>https://github.com/bitonator/oriental/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
+
+	<developers>
+		<developer>
+			<email>mahadevan.k@gmail.com</email>
+			<name>Mahadevan K</name>
+			<url>https://bitonator.github.io</url>
+			<id>bitonator</id>
+		</developer>
+	</developers>
+
+
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.orientechnologies</groupId>
+			<artifactId>orientdb-graphdb</artifactId>
+			<version>2.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>12.0</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<reportPlugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-project-info-reports-plugin</artifactId>
+							<version>2.2</version>
+							<configuration>
+								<dependencyDetailsEnabled>true</dependencyDetailsEnabled>
+								<dependencyLocationsEnabled>true</dependencyLocationsEnabled>
+							</configuration>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>2.7</version>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-surefire-report-plugin</artifactId>
+							<version>2.6</version>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-checkstyle-plugin</artifactId>
+							<version>2.6</version>
+						</plugin>
+					</reportPlugins>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- - <plugin> <groupId>org.sonatype.plugins</groupId> <artifactId>nexus-staging-maven-plugin</artifactId> 
+				<version>1.6.7</version> <extensions>true</extensions> <configuration> <serverId>ossrh</serverId> 
+				<nexusUrl>https://oss.sonatype.org/</nexusUrl> <autoReleaseAfterClose>true</autoReleaseAfterClose> 
+				</configuration> </plugin> -->
+		</plugins>
+	</build>
+	<distributionManagement>
+		<repository>
+			<id>nexus-snapshot</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<url> https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 </project>
